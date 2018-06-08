@@ -1,12 +1,15 @@
 'use strict';
 
 var express = require('express');
-var mongo = require('mongodb');
-var mongoose = require('mongoose');
-
 var cors = require('cors');
+const dns = require('dns');
+var myApi = require("./cr-api.js");
 
 var app = express();
+const bodyParser = require("body-parser");
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Basic Configuration 
 var port = process.env.PORT || 3000;
@@ -27,9 +30,15 @@ app.get('/', function(req, res){
 
   
 // your first API endpoint... 
-app.get("/api/hello", function (req, res) {
-  res.json({greeting: 'hello API'});
+app.post("/api/shorturl/new", function (req, res) {
+  console.log("url",req.body.url);
+  myApi.addURL(req.body,res);
 });
+
+app.get("/api/shorturl/:urlId", function (req, res) {
+  myApi.getUrl(req,res);
+});
+
 
 
 app.listen(port, function () {
