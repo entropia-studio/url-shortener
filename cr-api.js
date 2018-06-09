@@ -2,8 +2,6 @@ var mongo = require('mongodb');
 const mongoose = require("mongoose")
 const autoIncrement = require('mongoose-auto-increment');
 
-
-
 var connection = mongoose.createConnection("mongodb://localhost/freecodecamp");
 
 autoIncrement.initialize(connection);
@@ -38,16 +36,6 @@ module.exports = {
                 res.json({"original_url": url_input,"short_url":urlDoc._id});
             }).sort({_id: -1})
         })
-    },
-    getLastId(){
-        URL.findOne({},'_id',(error, urlDoc) => {
-            if (error){
-                console.error(error);
-                process.exit(1);
-            }
-            console.log("_id",urlDoc._id)
-            return urlDoc._id;
-        }).sort({_id: -1})
     },
     getUrl(req,res){
         URL.findOne({_id: req.params.urlId},'mUrl',(error, urlDoc) => {

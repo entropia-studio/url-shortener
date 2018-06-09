@@ -1,26 +1,23 @@
 'use strict';
 
-var express = require('express');
-var cors = require('cors');
+const express = require('express');
+const cors = require('cors');
 const dns = require('dns');
-var myApi = require("./cr-api.js");
-
-var app = express();
+const myApi = require("./cr-api.js");
+const url = require("url");
 const bodyParser = require("body-parser");
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+let app = express();
 
 // Basic Configuration 
 var port = process.env.PORT || 3000;
-
-/** this project needs a db !! **/ 
-// mongoose.connect(process.env.MONGOLAB_URI);
 
 app.use(cors());
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/public', express.static(process.cwd() + '/public'));
 
@@ -28,12 +25,11 @@ app.get('/', function(req, res){
   res.sendFile(process.cwd() + '/views/index.html');
 });
 
-  
-
 app.post("/api/shorturl/new", function (req, res) {
-  console.log("url",req.body.url);
-  // Check if the URL exists
-  dns.lookup(req.body.url,(error, addresses, family) => {
+  
+  // Check if URL exists
+  var mUrl = url.parse(req.body.url);
+  dns.lookup(mUrl.host,(error, addresses, family) => {
     if (error){
       var jsonError = {"error":"invalid URL"};
       res.status(200).json(jsonError);
@@ -48,7 +44,6 @@ app.post("/api/shorturl/new", function (req, res) {
 app.get("/api/shorturl/:urlId", function (req, res) {
   myApi.getUrl(req,res);
 });
-
 
 
 app.listen(port, function () {
