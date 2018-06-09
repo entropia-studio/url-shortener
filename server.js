@@ -29,10 +29,20 @@ app.get('/', function(req, res){
 });
 
   
-// your first API endpoint... 
+
 app.post("/api/shorturl/new", function (req, res) {
   console.log("url",req.body.url);
-  myApi.addURL(req.body,res);
+  // Check if the URL exists
+  dns.lookup(req.body.url,(error, addresses, family) => {
+    if (error){
+      var jsonError = {"error":"invalid URL"};
+      res.status(200).json(jsonError);
+      console.error(error.message);
+    }else{
+      myApi.addURL(req.body,res);  
+    }
+  })
+  
 });
 
 app.get("/api/shorturl/:urlId", function (req, res) {
