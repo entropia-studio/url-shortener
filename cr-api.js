@@ -1,8 +1,19 @@
 var mongo = require('mongodb');
 const mongoose = require("mongoose")
 const autoIncrement = require('mongoose-auto-increment');
+const envVar = require("./env.js");
 
-var connection = mongoose.createConnection("mongodb://localhost/freecodecamp");
+
+
+var options = { server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
+                useMongoClient: true,
+                replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } } };   
+
+var MONGODB_URI = 'mongodb://'+envVar.ENV.USER+':'+envVar.ENV.PASS+'@'+envVar.ENV.HOST+':'+envVar.ENV.DB_PORT+'/'+envVar.ENV.DB;
+
+mongoose.connect(MONGODB_URI, options);
+
+var connection = mongoose.connection;  
 
 autoIncrement.initialize(connection);
     
